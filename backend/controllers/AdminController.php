@@ -1,128 +1,158 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2017/12/31
- * Time: 15:59
- */
-
 namespace backend\controllers;
-
 use backend\models\Admin;
-use backend\models\LoginForm;
-use yii\helpers\ArrayHelper;
-
+use backend\models\LoginFrom;
+use yii\web\UploadedFile;
 class AdminController extends \yii\web\Controller
 {
+    /**
+     * @return string
+     */
     public function actionIndex()
     {
-        $rows=Admin::find()->all();
-        return $this->render('index',['rows'=>$rows]);
+        $model = Admin::find()->all();
+        //显示视图
+        return $this->render("index",['model'=>$model]);
     }
-    public function actionAdd()
-    {
-        $model=new Admin();
+    public function actionLogin(){
+        //实例表单模型
+        $model=new \backend\models\LoginForm();
+        //判断是不是post
         $request=\Yii::$app->request;
-        $auth=\Yii::$app->authManager;
-        $roles=$auth->getRoles();
-        $roles= ArrayHelper::map($roles,'name','description');
-        if($request->isPost){
+        IF($request->isPost){
+            //数据绑定
             $model->load($request->post());
-            $model->create_time=time();
-            $model->password=\Yii::$app->security->generatePasswordHash($model->password);
-            $model->take=\Yii::$app->security->generateRandomString();
             if($model->validate()){
-                $model->save();
-                if($model->roles){
-                    foreach ($model->roles as $role){
-                        $auth->assign($auth->getRole($role),$model->id);
-                    }
-                }
-                return $this->redirect(['index']);
-            }else{
-                var_dump($model->getErrors());exit;
-            }
-        }
-        return $this->render('add', ['model' => $model,'roles'=>$roles]);
-    }
-    public function actionLogin()
-    {
-        $model=new LoginForm();
-        $request=\Yii::$app->request;
-        if($request->isPost){
-            $model->load($request->post());
-            $admin=Admin::findOne(['name'=>$model->name]);
-            if($admin!=null){
-                if(  \Yii::$app->security->validatePassword($model->password,$admin->password)){
+                //根据用户名对象查出来
+                $admin=Admin::findOne(['username'=>$model->username]);
+                if($admin){
+                    if(\Yii::$app->security->validatePassword($model->password,$admin->password_reset_token));
+                    //执行登陆
                     \Yii::$app->user->login($admin,$model->rememberMe?3600*24*7:0);
+                    //追加最后登录的时间
                     $admin->last_login_time=time();
-                    $admin->last_login_ip= \Yii::$app->request->userIP;
                     $admin->save();
-                    return $this->redirect(['admin/index']);
+                    //跳转
+                    \Yii::$app->session->setFlash("success",'登录成功');
+                    return $this->redirect('index');
+
+
                 }else{
-                    $model->addError('password','密码错误');
+                    //密码错误
+                    $model->addError('password',"密码错误");
                 }
             }else{
-                $model->addError('name','该用户不存在');
+                //不存在  提示没有用户名
+                $model->addError('username',"用户名不存在");
             }
         }
-        return $this->render('login', ['model' => $model]);
+        return $this->render('login',['model'=>$model]);
     }
-    public function actionLogout()
-    {
+    public function actionLogout(){
         \Yii::$app->user->logout();
         return $this->redirect(['login']);
     }
-    public function actionDel($id)
+    public function actionAdd()
     {
-        $model=Admin::findOne($id);
-        $model->delete();
-        $auth=  \Yii::$app->authManager;
-        $auth->revokeAll($model->id);
-        \Yii::$app->session->setFlash('success','删除成功');
-        return $this->redirect(['index']);
+        $admin = new Admin();
+        $request = \Yii::$app->request;
+        if ($request->isPost) {
+            if ($admin->load($request->post())) {
+                if ($admin->validate()) {
+                    //自动登陆令牌
+                    $admin->auth_key.rand(1000,2000).rand(0,255);
+                    //追加ip
+                    $admin->last_login_ip =\Yii::$app->request->userIP;
+                    //追加注册时间
+                    $admin->add_time = time();
+//                    //追加最后登陆时间
+//                    $admin->last_login_time = time();
+                    //加密
+                    $admin->password_reset_token = \Yii::$app->security->generatePasswordHash($admin->password_reset_token);
+                    //随机字符串
+                    $admin->auth_key = \Yii::$app->security->generateRandomString();
+                    var_dump($admin->getErrors());
+                    $admin->save();
+                    \Yii::$app->session->setFlash('success', '注册成功');
+                    //跳转
+                    return     $this->redirect(['admin/index']);
+                }else{
+                    var_dump( $admin->getErrors());exit;
+                }
+            }
+        }
+        return $this->render('add', ['model' => $admin]);
     }
+//编辑
     public function actionEdit($id)
     {
-        $model=Admin::findOne($id);
-        //new一个组件对象用于操作rbac
-        $auth=  \Yii::$app->authManager;
-        //查询出数据库中的所有角色
-        $roles= $auth->getRoles();
-        //转换需要的数组格式用于视图显示多选框
-        $ro=ArrayHelper::map($roles,'name','description');
-        //查出当前用户的所有角色
-        $r=$auth->getRolesByUser($id);
-        //转换为需要的数组格式
-        $r=array_keys($r);
-//        if($r!=null){
-        //遍历当前的用户角色，赋值给model的role属性，用于回显
-        foreach ($r as $rr){
-            $model->roles[]= $rr;
-        }
-//        }
-        $request=\Yii::$app->request;
-        if($request->isPost){
-            $model->load($request->post());
-            $model->create_time=time();
-            $model->password=\Yii::$app->security->generatePasswordHash($model->password);
-            $model->take=\Yii::$app->security->generateRandomString();
-            if($model->validate()){
-                $model->save();
-                //删除当前用户原有角色
-                $auth->revokeAll($model->id);
-                if($model->roles){
-                    //循环给当前用户重新添加角色
-                    foreach ($model->roles as $role){
-                        $auth->assign($auth->getRole($role),$model->id);
-                    }
+        $admin =Admin::findOne($id);
+        $request = \Yii::$app->request;
+        if ($request->isPost) {
+            if ($admin->load($request->post())) {
+                if ($admin->validate()) {
+                    //自动登陆令牌
+                    $admin->auth_key.rand(1000,2000).rand(0,255);
+                    //追加ip
+                    $admin->last_login_ip =\Yii::$app->request->userIP;
+                    //追加注册时间
+                    $admin->add_time = time();
+                    //追加最后登陆时间
+                    $admin->last_login_time = time();
+                    //加密
+                    $admin->password_reset_token = \Yii::$app->security->generatePasswordHash($admin->password_reset_token);
+                    //随机字符串
+                    $admin->auth_key = \Yii::$app->security->generateRandomString();
+                    var_dump($admin->getErrors());
+                    $admin->save();
+                    \Yii::$app->session->setFlash('success', '修改成功');
+                    //跳转
+                    return     $this->redirect(['admin/index']);
+                }else{
+                    var_dump( $admin->getErrors());exit;
                 }
-                return $this->redirect(['index']);
-            }else{
-                var_dump($model->getErrors());exit;
             }
-        };
-        return $this->render('add', ['model' => $model,'roles'=>$ro]);
+        }
+        return $this->render('add', ['model' => $admin]);
+    }
+    public function actionDel($id){
+        //创造对象
+        $model=Admin::findOne($id);
+        //删除
+        $model->delete();
+        //跳转
+        return $this->redirect(['admin/index']);
+    }
+    public function actionUpload(){
+  // var_dump($_FILES);exit;
+  //得到上传文件的实例对象
+        $file=UploadedFile::getInstanceByName("file");
+//        var_dump($file);exit;
+        if ($file) {
+            //路径
+            $path="images/admin/upload/".time().".".$file->extension;
+//            var_dump($path);exit;
+            //移动图片
+            if ($file->saveAs($path,false)) {
+                // {"code": 0, "url": "http://domain/图片地址", "attachment": "图片地址"}
+
+                $result=[
+                    'code'=>0,
+                    'url'=>"/".$path,
+                    'attachment'=>$path
+
+                ];
+                return json_encode($result);
+            }
+
+        }
+
+
+
+
+
+
+
     }
 
 }

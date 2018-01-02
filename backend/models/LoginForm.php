@@ -13,22 +13,23 @@ use yii\base\Model;
 
 class LoginForm extends Model
 {
-    public $name;
+    public $username;
     public $password;
-    public $rememberMe;
+    //记住我,默认勾选
+    public $rememberMe = true;
     public function rules()
     {
         return [
-            [['password','name'],'required'],
-            ['rememberMe','safe']
+            [['username','password'],'required'],
+            [['rememberMe'],'safe']
         ];
     }
     public function attributeLabels()
     {
         return [
-            'name'=>'管理员',
+            'username'=>"用户名",
             'password'=>'密码',
-            'rememberMe'=>'记住密码'
+            'rememberMe'=>'记住密码？'
         ];
     }
 }

@@ -1,41 +1,36 @@
 <?php
 /* @var $this yii\web\View */
 ?>
-<h1>管理员列表</h1>
+<?=\yii\bootstrap\Html::a('添加管理员',['admin/add'],['class'=>'btn btn-primary'])?>&nbsp;
 
 <table class="table">
-
     <tr>
-        <th>ID</th>
+        <th>id</th>
         <th>管理员</th>
-        <th>注册时间</th>
-        <th>角色</th>
-        <th>令牌</th>
-        <th>最后登录时间</th>
-        <th>最后登录IP</th>
+        <th>头像</th>
+        <th>邮箱</th>
+        <th>添加时间</th>
+        <th>最后登陆时间</th>
+        <th>最后登陆ip</th>
         <th>操作</th>
     </tr>
-
-    <?php
-    foreach ($rows as $row):?>
+    <?php foreach ($model as $model):?>
         <tr>
-            <td><?=$row->id?></td>
-            <td><?=$row->name?></td>
-            <td><?=date('Y-m-d H:i:s',$row->create_time)?></td>
-            <td>
-                <?php
-                $roles=Yii::$app->authManager->getRolesByUser($row->id);
-                foreach ($roles as $role){
-                    echo $role->description."/";
-                }
+            <td><?=$model->id?></td>
+            <td><?=$model->username?></td>
+            <td><?=\yii\bootstrap\Html::img("/".$model->logo,['height'=>50])?></td>
+            <td><?=$model->email?></td>
+            <td><?=date('Y-m-d H:i:s',$model->add_time)?></td>
+            <td><?=date('Y-m-d H:i:s',$model->last_login_time)?></td>
+            <td><?=$model->last_login_ip?></td>
+            <td> <?php
+                echo   \yii\bootstrap\Html::a("编辑管理员",['admin/edit','id'=>$model->id],['class'=>'btn btn-info btn-sm']);
+                echo   \yii\bootstrap\Html::a("删除",['admin/del','id'=>$model->id],['class'=>'btn btn-danger btn-sm']);
                 ?>
-
-
             </td>
-            <td><?=$row->take?></td>
-            <td><?php if($row->last_login_time!=null){echo date('Y-m-d H:i:s',$row->last_login_time);}?></td>
-            <td><?=$row->last_login_ip?></td>
-            <td><a href="edit?id=<?=$row->id?>" title="编辑" class="glyphicon glyphicon-edit"></a>&nbsp;<a href="del?id=<?=$row->id?>" class="glyphicon glyphicon-trash" title="删除"></a></td>
         </tr>
-    <?php endforeach;?>
+
+
+    <?php endforeach;   ?>
+
 </table>

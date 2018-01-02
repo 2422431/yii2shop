@@ -1,21 +1,13 @@
 <?php
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-/* @var $this yii\web\View */
-/* @var $model backend\models\admin */
-/* @var $form ActiveForm */
-?>
-<div class="admin-add">
+$form=\yii\bootstrap\ActiveForm::begin();
+echo $form->field($model,'username');
+echo $form->field($model,'password')->passwordInput();
+echo $form->field($model,'email');
+echo $form->field($model, 'logo')->label("头像")->widget(\manks\FileInput::className(), [
+    'clientOptions' => [
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'name') ?>
-    <?= $form->field($model, 'password') ?>
-    <?= $form->field($model, 'roles')->checkboxList($roles) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('提交', ['class' => 'btn btn-primary']) ?>
-    </div>
-    <?php ActiveForm::end(); ?>
-
-</div>
+        'server' => \yii\helpers\Url::to(['admin/upload'])
+    ],
+]);
+echo \yii\bootstrap\Html::submitButton("提交",['class'=>'btn btn-success']);
+\yii\bootstrap\ActiveForm::end();

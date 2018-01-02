@@ -1,24 +1,30 @@
 <?php
 namespace backend\models;
 use Yii;
+use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 /**
  * This is the model class for table "admin".
  *
  * @property integer $id
- * @property string $name
+ * @property string $username
+ * @property string $auth_key
  * @property string $password
- * @property string $take
- * @property integer $create_time
+ * @property string $password_reset_token
+ * @property string $email
+ * @property integer $status
+ * @property integer $created_at
+ * @property integer $updated_at
+ * @property integer $add_time
  * @property integer $last_login_time
  * @property string $last_login_ip
  */
-class Admin extends \yii\db\ActiveRecord implements IdentityInterface
+class Admin extends ActiveRecord implements IdentityInterface
 {
-    public $roles=[];
     /**
      * @inheritdoc
      */
+    public static $statusText= ['-1'=>'删除','0'=>'隐藏','1'=>'显示'];
     public static function tableName()
     {
         return 'admin';
@@ -29,8 +35,15 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['name', 'password'], 'string', 'max' => 255],
-            [['roles'],'safe']
+            [['username', 'password', 'email'], 'required'],
+            [['add_time', 'last_login_time'], 'integer'],
+            [['username', 'password', 'password_reset_token', 'email', 'last_login_ip'], 'string', 'max' => 255],
+            [['auth_key'], 'string', 'max' => 32],
+            [['username'], 'unique'],
+            [['email'], 'unique'],
+            [['password_reset_token'], 'unique'],
+            [['logo'],'safe'],
+//            [['auth_key','add_time','last_login_time','last_login_ip'],safe]
         ];
     }
     /**
@@ -40,13 +53,18 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             'id' => 'ID',
-            'name' => '管理员名称',
+            'username' => '管理员',
+            'auth_key' => '自动登陆令牌',
             'password' => '密码',
-            'take' => '令牌',
-            'create_time' => '创建时间',
-            'last_login_time' => '最后登录时间',
-            'last_login_ip' => '最后登录IP',
-            'roles'=>'角色',
+            'password_reset_token' => 'Password Reset Token',
+            'email' => '邮箱',
+            'status' => '状态',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'add_time' => '注册时间',
+            'last_login_time' => '最后登陆时间',
+            'last_login_ip' => '登陆ip',
+            'img' => '头像',
         ];
     }
     /**
@@ -95,7 +113,7 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getAuthKey()
     {
-        return $this->take;
+        return $this->auth_key;
     }
     /**
      * Validates the given auth key.
@@ -104,9 +122,10 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
      * @param string $authKey the given auth key
      * @return bool whether the given auth key is valid.
      * @see getAuthKey()
+     * 判断自动令牌正确与否
      */
     public function validateAuthKey($authKey)
     {
-        return $this->take===$authKey;
+        return $this->auth_key===$authKey;
     }
 }

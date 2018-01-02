@@ -8,23 +8,13 @@
                 <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
             </div>
             <div class="pull-left info">
-                <p>欢迎您.XXX</p>
+                <p>欢迎您<?=Yii::$app->user->identity->username?></p>
 
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
 
-<!--        <!-- search form -->-->
-<!--        <form action="#" method="get" class="sidebar-form">-->
-<!--            <div class="input-group">-->
-<!--                <input type="text" name="q" class="form-control" placeholder="Search..."/>-->
-<!--              <span class="input-group-btn">-->
-<!--                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i>-->
-<!--                </button>-->
-<!--              </span>-->
-<!--            </div>-->
-<!--        </form>-->
-<!--        <!-- /.search form -->-->
+
 
         <?= dmstr\widgets\Menu::widget(
             [
@@ -59,8 +49,17 @@
                         ],
                     ],
 
-                    ['label' => '管理员列表', 'icon' => 'user-circle', 'url' => ['/admin/index']],
-                    ['label' => '登录', 'url' => ['admin/login'], 'visible' => Yii::$app->user->isGuest],
+
+                    [
+                        'label' => '管理员',
+                        'icon' => 'share',
+                        'url' => '#',
+                        'items' => [
+                            ['label' => '管理员列表', 'icon' => 'user-circle', 'url' => ['/admin/index'],],
+                            ['label' => '管理员添加', 'icon' => 'user-circle', 'url' => ['/admin/add'],],
+                        ],
+                    ],
+                    ['label' => '登录', 'icon' => 'share', 'url' => ['admin/login']],
                     [
                         'label' => 'Some tools',
                         'icon' => 'share',

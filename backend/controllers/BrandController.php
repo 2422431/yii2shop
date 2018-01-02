@@ -203,6 +203,7 @@ class BrandController extends Controller
 
         //得到上传文件的实例对象
         $file=UploadedFile::getInstanceByName("file");
+//        var_dump($file);exit;
         if ($file) {
             //路径
             $path="images/brand/".time().".".$file->extension;
