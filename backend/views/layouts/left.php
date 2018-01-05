@@ -5,7 +5,7 @@
         <!-- Sidebar user panel -->
         <div class="user-panel">
             <div class="pull-left image">
-                <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
+                <img src="/<?=Yii::$app->user->identity->logo?>" class="img-circle" alt="User Image"/>
             </div>
             <div class="pull-left info">
                 <p>欢迎您<?=Yii::$app->user->identity->username?></p>
@@ -19,7 +19,8 @@
         <?= dmstr\widgets\Menu::widget(
             [
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
-                'items' => [
+                 'items' => mdm\admin\components\MenuHelper::getAssignedMenu(Yii::$app->user->id),
+/*                'items' => [
                     ['label' => '后台菜单栏', 'options' => ['class' => 'header']],
 
                     [
@@ -59,6 +60,27 @@
                             ['label' => '管理员添加', 'icon' => 'user-circle', 'url' => ['/admin/add'],],
                         ],
                     ],
+
+                    [
+                        'label' => '权限管理',
+                        'icon' => 'share',
+                        'url' => '#',
+                        'items' => [
+                            ['label' => '权限列表', 'icon' => 'user-circle', 'url' => ['/permission/index'],],
+                            ['label' => '权限添加', 'icon' => 'user-circle', 'url' => ['/permission/add'],],
+                        ],
+                    ],
+
+                    [
+                        'label' => '角色管理',
+                        'icon' => 'share',
+                        'url' => '#',
+                        'items' => [
+                            ['label' => '角色列表', 'icon' => 'user-circle', 'url' => ['/role'],],
+                            ['label' => '角色添加', 'icon' => 'user-circle', 'url' => ['/role/add'],],
+                        ],
+                    ],
+
                     ['label' => '登录', 'icon' => 'share', 'url' => ['admin/login']],
                     [
                         'label' => 'Some tools',
@@ -86,7 +108,7 @@
                             ],
                         ],
                     ],
-                ],
+                ],*/
             ]
         ) ?>
 

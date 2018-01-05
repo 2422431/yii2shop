@@ -21,6 +21,7 @@ use Yii;
  */
 class AuthItem extends \yii\db\ActiveRecord
 {
+    //定义一个数据库不存在的属性装所以权限
     public $permissions=[];
     /**
      * @inheritdoc
@@ -36,10 +37,10 @@ class AuthItem extends \yii\db\ActiveRecord
     {
         return [
             [['name'], 'required'],
+            [['name'],'unique'],
             [['type', 'created_at', 'updated_at'], 'integer'],
             [['description', 'data'], 'string'],
             [['name', 'rule_name'], 'string', 'max' => 64],
-            [['name'],'unique'],
             [['permissions'],'safe']
         ];
     }
