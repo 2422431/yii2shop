@@ -25,7 +25,7 @@
 </form>
 <!--搜索栏和价格范围 end-->
     <div>&nbsp;</div>
-
+<div class="table-responsive">
 <table class="table">
 
     <tr>
@@ -69,6 +69,7 @@
     <?php endforeach;?>
 
 </table>
+</div>
 
 
 <?php

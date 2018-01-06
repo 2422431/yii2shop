@@ -3,6 +3,7 @@
 ?>
 <?=\yii\bootstrap\Html::a('添加权限',['add'],['class'=>'btn btn-primary'])?>
 <h1>权限列表</h1>
+<div class="table-responsive">
 <table class="table">
     <tr>
         <th>权限名称</th>
@@ -33,3 +34,4 @@
 
     <?php endforeach;?>
 </table>
+</div>

@@ -15,7 +15,7 @@ return [
         //模块的优先级要高于控制器
         'rbac' => [
             'class' => 'mdm\admin\Module',
-            'layout' => 'left-menu',
+//            'layout' => 'left-menu',
         ]
     ],
 //    rbac的全局注入
@@ -67,6 +67,7 @@ return [
         'user' => [
             'identityClass' => \backend\models\Admin::className(),
             'enableAutoLogin' => true,
+            'loginUrl' => 'admin/login',
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
         ],
         'session' => [

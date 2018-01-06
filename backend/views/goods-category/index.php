@@ -7,6 +7,8 @@
 
 <?php foreach ($cates as $cate): if($cate->p_id==0){?>
 
+    <div class="table-responsive">
+
     <div class="panel-group"  role="tablist" aria-multiselectable="false">
         <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="heading<?=$cate->id?>">
@@ -96,6 +98,7 @@
 
             </div>
         </div>
+    </div>
     </div>
 
 <?php  }; endforeach;?>

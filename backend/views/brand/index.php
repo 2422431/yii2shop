@@ -3,7 +3,7 @@
 ?>
 <h1>品牌列表</h1>
 <a href="<?= \yii\helpers\Url::to(['add']) ?>" class="btn btn-info">添加</a>
-
+<div class="table-responsive">
 <table class="table">
 
     <tr>
@@ -21,7 +21,7 @@
         <tr>
             <td><?= $brand->id ?></td>
             <td><?= $brand->name ?></td>
-            <td><?=\yii\bootstrap\Html::img("/".$brand->logo,['height'=>50])?></td>
+            <td><?=\yii\bootstrap\Html::img($brand->logo,['height'=>50])?></td>
             <td><?= $brand->intro ?></td>
             <td><?= $arr[$brand->status] ?></td>
             <td><?= $brand->sort ?></td>
@@ -33,3 +33,4 @@
         </tr>
     <?php endforeach; ?>
 </table>
+</div>

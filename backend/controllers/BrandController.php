@@ -4,7 +4,9 @@ namespace backend\controllers;
 
 use backend\models\Brand;
 use yii\web\Controller;
-use yii\web\UploadedFile;
+//use yii\web\UploadedFile;
+use yii\helpers\Json;
+use flyok666\qiniu\Qiniu;
 
 class BrandController extends Controller
 {
@@ -193,42 +195,61 @@ class BrandController extends Controller
 
     }
 
-    public function actionUpload(){
+//    public function actionUpload(){
+//
+//
+//
+//
+//        // var_dump($_FILES);exit;
+//
+//
+//        //得到上传文件的实例对象
+//        $file=UploadedFile::getInstanceByName("file");
+////        var_dump($file);exit;
+//        if ($file) {
+//            //路径
+//            $path="images/brand/".time().".".$file->extension;
+////            var_dump($path);exit;
+//            //移动图片
+//            if ($file->saveAs($path,false)) {
+//                // {"code": 0, "url": "http://domain/图片地址", "attachment": "图片地址"}
+//
+//                $result=[
+//                    'code'=>0,
+//                    'url'=>"/".$path,
+//                    'attachment'=>$path
+//
+//                ];
+//                return json_encode($result);
+//            }
+//
+//        }
+//
+//    }
 
-
-
-
-        // var_dump($_FILES);exit;
-
-
-        //得到上传文件的实例对象
-        $file=UploadedFile::getInstanceByName("file");
-//        var_dump($file);exit;
-        if ($file) {
-            //路径
-            $path="images/brand/".time().".".$file->extension;
-//            var_dump($path);exit;
-            //移动图片
-            if ($file->saveAs($path,false)) {
-                // {"code": 0, "url": "http://domain/图片地址", "attachment": "图片地址"}
-
-                $result=[
-                    'code'=>0,
-                    'url'=>"/".$path,
-                    'attachment'=>$path
-
-                ];
-                return json_encode($result);
-            }
-
-        }
-
-
-
-
-
-
-
+    public function actionUpload()
+    {
+        $config = [
+            'accessKey' => '5oL6adBOpKWxbuDgKtRz9M8yAU5wBAm_wAaEx1xM',//AK
+            'secretKey' => 'T_FO0rpYEi3rkmTtWtrehZsPG5Pcqogcxt3jPQJJ',//SK
+            'domain' => 'http://p1pt17ot5.bkt.clouddn.com',//临时域名
+            'bucket' => 'php080301',//空间名称
+            'area' => Qiniu::AREA_HUANAN//区域
+        ];
+        $qiniu = new Qiniu($config);
+        $key = uniqid();
+        $qiniu->uploadFile($_FILES['file']['tmp_name'],$key);
+        $url = $qiniu->getLink($key);
+        $info=[
+            'code'=>0,
+            'url'=>$url,
+            'attachment'=>$url
+        ];
+        echo   Json::encode($info);
+//
+//
+//        {"code": 0, "url": "http://domain/图片地址", "attachment": "图片地址"}
+////    }
     }
 
 }

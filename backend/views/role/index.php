@@ -2,7 +2,7 @@
 /* @var $this yii\web\View */
 ?>
 <h1>角色列表</h1>
-
+<div class="table-responsive">
 <table class="table">
     <tr>
         <th>角色名称</th>
@@ -46,3 +46,4 @@
     <?php endforeach;?>
 
 </table>
+</div>

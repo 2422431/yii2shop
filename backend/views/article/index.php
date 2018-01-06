@@ -5,7 +5,7 @@
 
     <a href="add" class="btn btn-success">添加文章</a>
 
-
+    <div class="table-responsive">
     <table class="table">
 
         <tr>
@@ -40,6 +40,7 @@
             </tr>
         <?php endforeach;?>
     </table>
+    </div>
 
 <?php
 echo \yii\widgets\LinkPager::widget([

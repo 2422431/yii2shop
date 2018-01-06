@@ -14,103 +14,35 @@
             </div>
         </div>
 
+        <?php
+        $callback = function($menu){
+            $data = json_decode($menu['data'], true);
+            $items = $menu['children'];
+            $return = [
+                'label' => $menu['name'],
+                'url' => [$menu['route']],
+            ];
+            //处理我们的配置
+            if ($data) {
+                //visible
+                isset($data['visible']) && $return['visible'] = $data['visible'];
+                //icon
+                isset($data['icon']) && $data['icon'] && $return['icon'] = $data['icon'];
+                //other attribute e.g. class...
+                $return['options'] = $data;
+            }
+            //没配置图标的显示默认图标
+            (!isset($return['icon']) || !$return['icon']) && $return['icon'] = 'fa fa-circle-o';
+            $items && $return['items'] = $items;
+            return $return;
+        };
+        //这里我们对一开始写的菜单menu进行了优化
+        echo dmstr\widgets\Menu::widget( [
+            'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
 
+            'items' =>\mdm\admin\components\MenuHelper::getAssignedMenu(Yii::$app->user->id, false, $callback) ,
+        ] ); ?>
 
-        <?= dmstr\widgets\Menu::widget(
-            [
-                'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
-                 'items' => mdm\admin\components\MenuHelper::getAssignedMenu(Yii::$app->user->id),
-/*                'items' => [
-                    ['label' => '后台菜单栏', 'options' => ['class' => 'header']],
-
-                    [
-                        'label' => '商品管理',
-                        'icon' => 'share',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => '添加商品', 'icon' => 'window-minimize', 'url' => ['/goods/add'],],
-                            ['label' => '商品列表', 'icon' => 'window-minimize', 'url' => ['/goods/index'],],
-                            ['label' => '商品分类', 'icon' => 'window-minimize', 'url' => ['/goods-category'],],
-
-                        ],
-                    ],
-
-                    ['label' => '品牌管理', 'icon' => 'share', 'url' => ['/brand/index']],
-
-
-                    [
-                        'label' => '文章管理',
-                        'icon' => 'share',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => '文章分类', 'icon' => 'file-code-o', 'url' => ['/article-category'],],
-                            ['label' => '文章添加', 'icon' => 'dashboard', 'url' => ['/article/add'],],
-                            ['label' => '文章列表', 'icon' => 'dashboard', 'url' => ['/article/index'],],
-
-                        ],
-                    ],
-
-
-                    [
-                        'label' => '管理员',
-                        'icon' => 'share',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => '管理员列表', 'icon' => 'user-circle', 'url' => ['/admin/index'],],
-                            ['label' => '管理员添加', 'icon' => 'user-circle', 'url' => ['/admin/add'],],
-                        ],
-                    ],
-
-                    [
-                        'label' => '权限管理',
-                        'icon' => 'share',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => '权限列表', 'icon' => 'user-circle', 'url' => ['/permission/index'],],
-                            ['label' => '权限添加', 'icon' => 'user-circle', 'url' => ['/permission/add'],],
-                        ],
-                    ],
-
-                    [
-                        'label' => '角色管理',
-                        'icon' => 'share',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => '角色列表', 'icon' => 'user-circle', 'url' => ['/role'],],
-                            ['label' => '角色添加', 'icon' => 'user-circle', 'url' => ['/role/add'],],
-                        ],
-                    ],
-
-                    ['label' => '登录', 'icon' => 'share', 'url' => ['admin/login']],
-                    [
-                        'label' => 'Some tools',
-                        'icon' => 'share',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii'],],
-                            ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug'],],
-                            [
-                                'label' => 'Level One',
-                                'icon' => 'circle-o',
-                                'url' => '#',
-                                'items' => [
-                                    ['label' => 'Level Two', 'icon' => 'circle-o', 'url' => '#',],
-                                    [
-                                        'label' => 'Level Two',
-                                        'icon' => 'circle-o',
-                                        'url' => '#',
-                                        'items' => [
-                                            ['label' => 'Level Three', 'icon' => 'circle-o', 'url' => '#',],
-                                            ['label' => 'Level Three', 'icon' => 'circle-o', 'url' => '#',],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],*/
-            ]
-        ) ?>
 
     </section>
 

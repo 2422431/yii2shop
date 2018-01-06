@@ -4,7 +4,7 @@
     <h1>文章分类列表</h1>
 
     <a href="add" class="btn btn-success">添加分类</a>
-
+    <div class="table-responsive">
     <table class="table">
 
         <tr>
@@ -33,6 +33,7 @@
             </tr>
         <?php endforeach;?>
     </table>
+    </div>
 
 <?php
 echo \yii\widgets\LinkPager::widget([

@@ -2,7 +2,7 @@
 /* @var $this yii\web\View */
 ?>
 <?=\yii\bootstrap\Html::a('添加管理员',['admin/add'],['class'=>'btn btn-primary'])?>&nbsp;
-
+<div class="table-responsive">
 <table class="table">
     <tr>
         <th>id</th>
@@ -34,3 +34,4 @@
     <?php endforeach;   ?>
 
 </table>
+</div>
