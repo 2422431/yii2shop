@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use frontend\models\User;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -82,20 +83,27 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
+//        if (!Yii::$app->user->isGuest) {
+//            return $this->goHome();
+//        }
+        //实例化表单模型
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        } else {
-            return $this->render('login', [
-                'model' => $model,
-            ]);
+        $req = Yii::$app->request;
+//        var_dump($req->post());exit;
+        if ($req->isPost) {
+            if ($model->load($req->post())) {
+                $user = User::findOne(['username' => $model->username]);
+                if ($user) {
+                    if (\Yii::$app->security->validatePassword($model->password, $user->password_hash)) ;
+                    \Yii::$app->session->setFlash("success", '登录成功');
+                    return $this->redirect('index');
+                } else {
+                }
+            } else {
+            }
         }
+        return $this->render('login');
     }
-
     /**
      * Logs out the current user.
      *
