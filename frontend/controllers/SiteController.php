@@ -8,7 +8,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\LoginForm;
+use frontend\models\LoginForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -71,39 +71,43 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex()
-    {
-        return $this->render('index');
-    }
+//    public function actionIndex()
+//    {
+//        return $this->render('index');
+//    }
 
     /**
      * Logs in a user.
      *
      * @return mixed
      */
-    public function actionLogin()
-    {
-//        if (!Yii::$app->user->isGuest) {
-//            return $this->goHome();
+//    public function actionLogin()
+//    {
+////        if (!Yii::$app->user->isGuest) {
+////            return $this->goHome();
+////        }
+//        //实例化表单模型
+//        $model = new LoginForm();
+//        $req = Yii::$app->request;
+////        var_dump($req->post());exit;
+//        if ($req->isPost) {
+//            if ($model->load($req->post())) {
+//                $user = User::findOne(['username' => $model->username]);
+//                if ($user) {
+//                    if (\Yii::$app->security->validatePassword($model->password, $user->password_hash)) ;
+//                    \Yii::$app->session->setFlash("success", '登录成功');
+//                    return $this->redirect('index');
+//                } else {
+//                    \Yii::$app->session->setFlash('success','登录失败');
+//                    return $this->redirect('regist');
+//                }
+//            } else {
+//                \Yii::$app->session->setFlash('success','登录失败');
+//                return $this->redirect('regist');
+//            }
 //        }
-        //实例化表单模型
-        $model = new LoginForm();
-        $req = Yii::$app->request;
-//        var_dump($req->post());exit;
-        if ($req->isPost) {
-            if ($model->load($req->post())) {
-                $user = User::findOne(['username' => $model->username]);
-                if ($user) {
-                    if (\Yii::$app->security->validatePassword($model->password, $user->password_hash)) ;
-                    \Yii::$app->session->setFlash("success", '登录成功');
-                    return $this->redirect('index');
-                } else {
-                }
-            } else {
-            }
-        }
-        return $this->render('login');
-    }
+//        return $this->render('login');
+//    }
     /**
      * Logs out the current user.
      *

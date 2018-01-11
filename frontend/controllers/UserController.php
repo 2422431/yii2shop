@@ -29,6 +29,8 @@ class UserController extends \yii\web\Controller
             //  var_dump($request->post());
             //添加用户
             $user=new User();
+            //给user绑定场景
+            $user->setScenario('reg');
             //数据绑定
             $user->load($request->post());
             //后台验证
@@ -90,5 +92,44 @@ class UserController extends \yii\web\Controller
         //根据手机号取对应的验证
         $code=\Yii::$app->session->get($tel);
         return $code;
+    }
+
+
+    public function actionLogin()
+    {
+        $request=\Yii::$app->request;
+        if ($request->isPost) {
+            //创建对象
+            $model=new User();
+            $model->scenario="login";
+            // 绑定数据
+            $model->load($request->post());
+//            var_dump($model->rememberMe);exit;
+            //后台验证
+            if ($model->validate()) {
+                //1. 找到用户对象
+                $user=User::findOne(['username'=>$model->username]);
+                //2. 判断用户是否存在  // 3.判断密码是否正确
+                if ($user && \Yii::$app->security->validatePassword($model->password,$user->password_hash)) {
+                    //用户登录
+                    \Yii::$app->user->login($user,$model->rememberMe?3600*24*7:0);
+                    return $this->redirect(['user/index']);
+                }else{
+                    //密码错误或者用户名不存在
+                    echo "密码错误";exit;
+                }
+            }
+            // var_dump($model->errors);exit;
+            // var_dump($request->post());
+        }
+        return $this->render('login');
+
+    }
+
+    public function actionLogout()
+    {
+        if (\Yii::$app->user->logout()) {
+            return $this->redirect(['user/login']);
+        }
     }
 }
